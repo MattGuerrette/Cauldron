@@ -1,9 +1,15 @@
 project (Cauldron_VK)
 
+if(WIN32)
 add_compile_options(/MP)
+endif()
 
 include(common)
 
+# For now while Windows specific like DirectXMath
+# exist. Source lists will be platform dependent
+# as the porting process moves along
+if(WIN32)
 set(GLTF_src
     GLTF/GltfBBoxPass.cpp
     GLTF/GltfBBoxPass.h
@@ -17,6 +23,7 @@ set(GLTF_src
     GLTF/GltfMotionVectorsPass.h
     GLTF/GLTFTexturesAndBuffers.cpp
     GLTF/GLTFTexturesAndBuffers.h)
+
 
 set(PostProc_src
     PostProc/Bloom.cpp
@@ -40,7 +47,10 @@ set(PostProc_src
     PostProc/TonemappingCS.cpp
     PostProc/TonemappingCS.h
 )
+endif()
 
+
+if(WIN32)
 set(Base_src
     base/CommandListRing.cpp
     base/CommandListRing.h
@@ -84,6 +94,50 @@ set(Base_src
     base/Texture.h
     base/UploadHeap.cpp
     base/UploadHeap.h)
+else()
+set(Base_src
+    base/CommandListRing.cpp
+    base/CommandListRing.h
+    base/Device.cpp
+    base/Device.h
+    base/DeviceProperties.cpp
+    base/DeviceProperties.h
+    base/DynamicBufferRing.cpp
+    base/DynamicBufferRing.h
+    base/GPUTimestamps.cpp
+    base/GPUTimestamps.h
+    base/ExtFreeSync2.cpp
+    base/ExtFreeSync2.h
+    base/ExtFp16.cpp
+    base/ExtFp16.h
+    base/ExtValidation.cpp
+    base/ExtValidation.h
+    base/ExtDebugMarkers.cpp
+    base/ExtDebugMarkers.h
+    base/ExtDebugUtils.cpp
+    base/ExtDebugUtils.h
+    base/Helper.cpp
+    base/Helper.h
+    base/Imgui.cpp
+    base/Imgui.h
+    base/Instance.cpp
+    base/Instance.h
+    base/InstanceProperties.cpp
+    base/InstanceProperties.h
+    base/ResourceViewHeaps.cpp
+    base/ResourceViewHeaps.h
+    base/ShaderCompilerHelper.cpp
+    base/ShaderCompilerHelper.h
+    base/StaticBufferPool.cpp
+    base/StaticBufferPool.h
+    base/SwapChain.cpp
+    base/SwapChain.h
+    base/Texture.cpp
+    base/Texture.h
+    base/UploadHeap.cpp
+    base/UploadHeap.h)
+endif()
+
 
 set(Widgets_src
     widgets/Axis.cpp
@@ -125,13 +179,17 @@ set(Shaders_src
     )
 
 set(media_src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../media/brdfLut.dds
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../media/BrdfLut.dds
 )    
 
 copyCommand("${media_src}" ${CMAKE_HOME_DIRECTORY}/bin)
 copyCommand("${Shaders_src}" ${CMAKE_HOME_DIRECTORY}/bin/ShaderLibVK)
 
+if(WIN32)
 add_library (${PROJECT_NAME} STATIC ${GLTF_src} ${PostProc_src} ${Base_src} ${Widgets_src} ${Shaders_src} ${media_src})
+else()
+add_library (${PROJECT_NAME} STATIC ${Base_src} ${Widgets_src} ${Shaders_src} ${media_src})
+endif()
 
 target_link_libraries (${PROJECT_NAME} Cauldron_Common NJSON Vulkan::Vulkan)
 target_include_directories (${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

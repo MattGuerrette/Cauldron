@@ -72,8 +72,8 @@ namespace CAULDRON_VK
 
         if (measurements > 0)
         {
-            UINT64 TimingsInTicks[256] = {};
-            VkResult res = vkGetQueryPoolResults(m_pDevice->GetDevice(), m_QueryPool, offset, measurements, measurements * sizeof(UINT64), &TimingsInTicks, sizeof(UINT64), VK_QUERY_RESULT_WITH_AVAILABILITY_BIT);
+            uint64_t TimingsInTicks[256] = {};
+            VkResult res = vkGetQueryPoolResults(m_pDevice->GetDevice(), m_QueryPool, offset, measurements, measurements * sizeof(uint64_t), &TimingsInTicks, sizeof(uint64_t), VK_QUERY_RESULT_WITH_AVAILABILITY_BIT);
 
             pTimestamp->resize(measurements);
             for (uint32_t i = 0; i < measurements; i++)

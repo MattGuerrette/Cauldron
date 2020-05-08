@@ -18,11 +18,16 @@
 // THE SOFTWARE.
 
 #include "stdafx.h"
-#include <vulkan/vulkan_win32.h>
 #include "Instance.h"
 #include "InstanceProperties.h"
 #include "DeviceProperties.h"
 #include "ExtValidation.h"
+
+#ifdef _WIN32
+#include <vulkan/vulkan_win32.h
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
 
 namespace CAULDRON_VK
 {
@@ -43,8 +48,12 @@ namespace CAULDRON_VK
         const char* pMessage,
         void* pUserData)
     {
+        #ifdef _WIN32
         OutputDebugStringA(pMessage);
         OutputDebugStringA("\n");
+        #else
+        fprintf(stderr, "%s\n", pMessage);
+        #endif
         return VK_FALSE;
     }
 

@@ -23,7 +23,12 @@
 #include "UploadHeap.h"
 #include "ResourceViewHeaps.h"
 #include "../VulkanMemoryAllocator/vk_mem_alloc.h"
+
+#ifdef _WIN32
 #include "Misc/DDSLoader.h"
+#else
+#include "Misc/ImgLoader.h"
+#endif
 
 namespace CAULDRON_VK
 {
@@ -37,9 +42,9 @@ namespace CAULDRON_VK
         virtual void OnDestroy();
 
         // load file into heap
-        INT32 Init(Device *pDevice, VkImageCreateInfo *pCreateInfo, char *name = NULL);
-        INT32 InitRenderTarget(Device *pDevice, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits msaa, VkImageUsageFlags usage, bool bUAV, char *name = NULL);
-        INT32 InitDepthStencil(Device *pDevice, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits msaa, char *name = NULL);
+        int32_t Init(Device *pDevice, VkImageCreateInfo *pCreateInfo, char *name = NULL);
+        int32_t InitRenderTarget(Device *pDevice, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits msaa, VkImageUsageFlags usage, bool bUAV, char *name = NULL);
+        int32_t InitDepthStencil(Device *pDevice, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits msaa, char *name = NULL);
         bool InitFromFile(Device* pDevice, UploadHeap* pUploadHeap, const char *szFilename, bool useSRGB = false, float cutOff = 1.0f);
 
         VkImage Resource() const { return m_pResource; }
@@ -72,7 +77,7 @@ namespace CAULDRON_VK
 
         struct FootPrint
         {
-            UINT8* pixels;
+            uint8_t* pixels;
             uint32_t width, height, offset;
         } footprints[6][12];
 

@@ -22,8 +22,14 @@
 #include "FreeSync2.h"
 #include "Misc/Misc.h"
 #include "Misc/Error.h"
+
 #include <vulkan/vulkan.h>
+
+#ifdef _WIN32
 #include <vulkan/vulkan_win32.h>
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
 
 namespace CAULDRON_VK
 {
@@ -291,6 +297,7 @@ namespace CAULDRON_VK
         g_vkSetHdrMetadataEXT(s_device, 1, &swapchain, &s_HdrMetadataEXT);
     }
 
+
     //--------------------------------------------------------------------------------------
     //
     // fs2SetFullscreenState
@@ -298,6 +305,7 @@ namespace CAULDRON_VK
     //--------------------------------------------------------------------------------------
     void fs2SetFullscreenState(bool fullscreen, VkSwapchainKHR swapchain)
     {
+#ifdef _WIN32 // For now, Fedora 32 repo does not have latest SDK headers
         if (fullscreen)
         {
             VkResult res = g_vkAcquireFullScreenExclusiveModeEXT(s_device, swapchain);
@@ -309,6 +317,7 @@ namespace CAULDRON_VK
             assert(res == VK_SUCCESS);
         }
         s_isfullScreen = fullscreen;
+#endif
     }
 
     //--------------------------------------------------------------------------------------

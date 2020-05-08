@@ -19,14 +19,17 @@
 
 #include "stdafx.h"
 #include "ShaderCompilerHelper.h"
-#include "Base/ExtDebugUtils.h"
-#include "Base/ExtDebugMarkers.h"
+#include "base/ExtDebugUtils.h"
+#include "base/ExtDebugMarkers.h"
 #include "Imgui.h"
 
 namespace CAULDRON_VK
 {
     // Data
+
+    #ifdef _WIN32
     static HWND                     g_hWnd = 0;
+    #endif
 
     struct VERTEX_CONSTANT_BUFFER
     {
@@ -410,7 +413,7 @@ namespace CAULDRON_VK
         vi.flags = 0;
         vi.vertexBindingDescriptionCount = 1;
         vi.pVertexBindingDescriptions = &vi_binding;
-        vi.vertexAttributeDescriptionCount = _countof(vi_attrs);
+        vi.vertexAttributeDescriptionCount = std::extent<decltype(vi_attrs)>::value;
         vi.pVertexAttributeDescriptions = vi_attrs;
 
         // input assembly state

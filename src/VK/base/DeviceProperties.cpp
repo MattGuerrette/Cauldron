@@ -55,7 +55,9 @@ namespace CAULDRON_VK
             return true;
         }
 
+#ifdef _WIN32
         Trace("Opps!! The device extension '%s' has not been found", deviceExtensionName);
+#endif
 
         return false;
     }

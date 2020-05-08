@@ -1,5 +1,5 @@
 // AMD AMDUtils code
-// 
+//
 // Copyright(c) 2018 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -18,16 +18,20 @@
 // THE SOFTWARE.
 
 #include "stdafx.h"
-#include "ImguiHelper.h"
+#include "ImGuiHelper.h"
 
+#ifdef _WIN32
 static HWND g_hWnd;
+#endif
 
-bool ImGUI_Init(void* hwnd)
+bool ImGUI_Init(void *hwnd)
 {
+    ImGuiIO &io = ImGui::GetIO();
+
+#ifdef _WIN32
     g_hWnd = (HWND)hwnd;
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.KeyMap[ImGuiKey_Tab] = VK_TAB;                       // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array that we will update during the application lifetime.
+    io.KeyMap[ImGuiKey_Tab] = VK_TAB; // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array that we will update during the application lifetime.
     io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
     io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
     io.KeyMap[ImGuiKey_UpArrow] = VK_UP;
@@ -47,8 +51,9 @@ bool ImGUI_Init(void* hwnd)
     io.KeyMap[ImGuiKey_Y] = 'Y';
     io.KeyMap[ImGuiKey_Z] = 'Z';
 
-    io.RenderDrawListsFn = NULL;
     io.ImeWindowHandle = g_hWnd;
+#endif
+    io.RenderDrawListsFn = nullptr;
 
     return true;
 }
@@ -56,13 +61,17 @@ bool ImGUI_Init(void* hwnd)
 void ImGUI_Shutdown()
 {
     ImGui::Shutdown();
+
+#ifdef _WIN32
     g_hWnd = (HWND)0;
+#endif
 }
 
 void ImGUI_UpdateIO()
 {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
 
+#ifdef _WIN32
     // Setup display size (every frame to accommodate for window resizing)
     RECT rect;
     GetClientRect(g_hWnd, &rect);
@@ -80,21 +89,23 @@ void ImGUI_UpdateIO()
 
     // Hide OS mouse cursor if ImGui is drawing it
     if (io.MouseDrawCursor)
-        SetCursor(NULL);    // Start the frame
+        SetCursor(NULL); // Start the frame
+#endif
 }
 
 static bool IsAnyMouseButtonDown()
 {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     for (int n = 0; n < IM_ARRAYSIZE(io.MouseDown); n++)
         if (io.MouseDown[n])
             return true;
     return false;
 }
 
+#ifdef _WIN32
 IMGUI_API LRESULT ImGUI_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     switch (msg)
     {
     case WM_LBUTTONDOWN:
@@ -102,9 +113,12 @@ IMGUI_API LRESULT ImGUI_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARA
     case WM_MBUTTONDOWN:
     {
         int button = 0;
-        if (msg == WM_LBUTTONDOWN) button = 0;
-        if (msg == WM_RBUTTONDOWN) button = 1;
-        if (msg == WM_MBUTTONDOWN) button = 2;
+        if (msg == WM_LBUTTONDOWN)
+            button = 0;
+        if (msg == WM_RBUTTONDOWN)
+            button = 1;
+        if (msg == WM_MBUTTONDOWN)
+            button = 2;
         if (!IsAnyMouseButtonDown() && GetCapture() == NULL)
             SetCapture(hwnd);
         io.MouseDown[button] = true;
@@ -115,9 +129,12 @@ IMGUI_API LRESULT ImGUI_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARA
     case WM_MBUTTONUP:
     {
         int button = 0;
-        if (msg == WM_LBUTTONUP) button = 0;
-        if (msg == WM_RBUTTONUP) button = 1;
-        if (msg == WM_MBUTTONUP) button = 2;
+        if (msg == WM_LBUTTONUP)
+            button = 0;
+        if (msg == WM_RBUTTONUP)
+            button = 1;
+        if (msg == WM_MBUTTONUP)
+            button = 2;
         io.MouseDown[button] = false;
         if (!IsAnyMouseButtonDown() && GetCapture() == hwnd)
             ReleaseCapture();
@@ -148,3 +165,4 @@ IMGUI_API LRESULT ImGUI_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARA
     }
     return 0;
 }
+#endif

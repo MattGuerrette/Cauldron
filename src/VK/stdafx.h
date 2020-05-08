@@ -5,28 +5,38 @@
 
 #pragma once
 
+#ifdef _WIN32
+
 #include <SDKDDKVer.h>
 
-#define NOMINMAX    
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
 // Windows Header Files:
 #include <windows.h>
 #include <windowsx.h>
 #include <wrl.h>
-
-// C RunTime Header Files
-#include <malloc.h>
 #include <tchar.h>
-#include <cassert>
-
-// GFX API 
-#include <vulkan/vulkan.h>
 
 // math API
 #include <DirectXMath.h>
 using namespace DirectX;
 
+//#include <Shellapi.h>
+
+#else
+
+#include <xcb/xcb.h>
+
+#endif
+
+// GFX API
+#include <vulkan/vulkan.h>
+
+// C RunTime Header Files
+#include <malloc.h>
+#include <cassert>
+#include <cstring>
 #include <string>
 #include <map>
 #include <iostream>
@@ -36,7 +46,5 @@ using namespace DirectX;
 #include <limits>
 #include <algorithm>
 #include <mutex>
-
-//#include <Shellapi.h> 
 
 // TODO: reference additional headers your program requires here

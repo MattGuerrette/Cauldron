@@ -19,7 +19,7 @@
 
 #pragma once
 #include "PostProcPS.h"
-#include "blurPS.h"
+#include "BlurPS.h"
 
 #define BLOOM_MAX_MIP_LEVELS 12
 

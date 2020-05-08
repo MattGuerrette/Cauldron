@@ -20,8 +20,14 @@
 
 #include "ExtFp16.h"
 #include "Misc/Misc.h"
+
 #include <vulkan/vulkan.h>
+
+#ifdef _WIN32
 #include <vulkan/vulkan_win32.h>
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
 
 namespace CAULDRON_VK
 {

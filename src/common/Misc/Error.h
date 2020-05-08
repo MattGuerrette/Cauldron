@@ -19,6 +19,8 @@
 
 #pragma once
 
+
+#ifdef _WIN32
 void ShowErrorMessageBox(HRESULT hr);
 void ShowCustomErrorMessageBox(_In_opt_ LPCWSTR lpErrorString);
 
@@ -32,3 +34,4 @@ inline void ThrowIfFailed(HRESULT hr)
         throw 1;
     }
 }
+#endif

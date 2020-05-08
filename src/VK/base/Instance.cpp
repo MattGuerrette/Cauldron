@@ -21,9 +21,14 @@
 #include <algorithm>
 #include "Instance.h"
 #include "InstanceProperties.h"
-#include <vulkan/vulkan_win32.h>
 #include "ExtValidation.h"
 #include "ExtFreeSync2.h"
+
+#ifdef _WIN32
+#include <vulkan/vulkan_win32.h>
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
 
 
 namespace CAULDRON_VK
@@ -41,7 +46,11 @@ namespace CAULDRON_VK
 
         // Check required extensions are present
         //
+        #ifdef _WIN32
         ip.AddInstanceExtensionName(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+        #else
+        ip.AddInstanceExtensionName(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+        #endif
         ip.AddInstanceExtensionName(VK_KHR_SURFACE_EXTENSION_NAME);
         ExtFreeSync2CheckInstanceExtensions(&ip);
         if (usingValidationLayer)

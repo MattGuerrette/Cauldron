@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "ShaderCompilerHelper.h"
-#include "Base/ExtDebugUtils.h"
+#include "base/ExtDebugUtils.h"
 
 #include "Misc/Misc.h"
 #include "Misc/Cache.h"
@@ -52,7 +52,7 @@ namespace CAULDRON_VK
 
         // compute command line to invoke the shader compiler
         //
-        char *stage = NULL;
+        const char *stage = NULL;
         switch (shader_type)
         {
         case VK_SHADER_STAGE_VERTEX_BIT:  stage = "vertex"; break;
@@ -69,12 +69,14 @@ namespace CAULDRON_VK
         std::string commandLine = format("glslc --target-env=vulkan1.1 -fshader-stage=%s -fentry-point=%s %s -o %s -I %s %s", stage, pEntryPoint, filenameGlsl.c_str(), filenameSpv.c_str(), SHADER_LIB_DIR, defines.c_str());
         std::string filenameErr = format(SHADER_CACHE_DIR"\\%p.err", hash);
 
+#ifdef _WIN32
         if (LaunchProcess(commandLine, filenameErr) == true)
         {
             ReadFile(filenameSpv.c_str(), outSpvData, outSpvSize, true);
             assert(*outSpvSize != 0);
             return true;
         }
+#endif
 
         return false;
     }
@@ -166,7 +168,7 @@ namespace CAULDRON_VK
             if (ReadFile(filenameSpv.c_str(), &SpvData, &SpvSize, true) == false)
 #endif
             {
-                std::string &shader = GenerateSource(sourceType, shader_type, pshader, pEntryPoint, pDefines);
+                const std::string &shader = GenerateSource(sourceType, shader_type, pshader, pEntryPoint, pDefines);
                 VKCompileToSpirv(hash, sourceType, shader_type, shader.c_str(), pEntryPoint, pDefines, &SpvData, &SpvSize);
             }
 
@@ -221,8 +223,11 @@ namespace CAULDRON_VK
 
         //append path
         char fullpath[1024];
+        #ifdef _WIN32
         sprintf_s(fullpath, SHADER_LIB_DIR"\\%s", pFilename);
-
+        #else
+        sprintf(fullpath, SHADER_LIB_DIR"\\%s", pFilename);
+        #endif
         if (ReadFile(fullpath, &pShaderCode, &size, false))
         {
             VkResult res = VKCompileFromString(device, sourceType, shader_type, pShaderCode, pEntryPoint, pDefines, pShader);
@@ -238,8 +243,10 @@ namespace CAULDRON_VK
     //
     void CreateShaderCache()
     {
+#ifdef _WIN32
         CreateDirectoryA(SHADER_LIB_DIR, 0);
         CreateDirectoryA(SHADER_CACHE_DIR, 0);
+#endif
     }
 
     //

@@ -5,6 +5,8 @@
 
 #pragma once
 
+#ifdef _WIN32
+
 #include <SDKDDKVer.h>
 
 #define NOMINMAX    
@@ -15,15 +17,22 @@
 #include <windowsx.h>
 #include <wrl.h>
 
-// C RunTime Header Files
-#include <malloc.h>
-#include <tchar.h>
-#include <cassert>
-
 // math API
 #include <DirectXMath.h>
 using namespace DirectX;
 
+#include <tchar.h>
+
+
+#else
+
+#include <xcb/xcb.h>
+
+#endif
+
+// C RunTime Header Files
+#include <malloc.h>
+#include <cassert>
 #include <string>
 #include <map>
 #include <iostream>

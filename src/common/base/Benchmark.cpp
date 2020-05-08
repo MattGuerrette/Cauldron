@@ -1,5 +1,5 @@
 // AMD AMDUtils code
-// 
+//
 // Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,8 +30,11 @@ float Benchmark(const std::vector<TimeStamp> &timeStamps, float time, float dura
     static FILE *f = NULL;
     if (f == NULL)
     {
+#ifdef _WIN32
         fopen_s(&f, "res.csv", "a");
-
+#else
+        f = fopen("res.csv", "a");
+#endif
         //save heathers
         fprintf(f, "time");
         for (uint32_t i = 1; i < timeStamps.size(); i++)

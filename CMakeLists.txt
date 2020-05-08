@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.4)
+
+if(WIN32)
 set(CMAKE_GENERATOR_PLATFORM x64)
+endif()
 
 project (Cauldron_${GFX_API})
 
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
+
+# if(UNIX)
+# include_directories(libs/sal
+#                     libs/DirectXMath/Inc)
+# endif()
 
 # ouput exe to bin directory
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/bin)
@@ -13,9 +21,9 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # reference libs used by both backends
-add_subdirectory(src/Common)
+add_subdirectory(src/common)
 add_subdirectory(libs/json)
-add_subdirectory(libs/ImGUI)
+add_subdirectory(libs/imgui)
 
 if(GFX_API STREQUAL DX12)        
     add_subdirectory(libs/d3d12x)

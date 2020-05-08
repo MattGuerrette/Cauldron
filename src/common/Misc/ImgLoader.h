@@ -1,5 +1,5 @@
 // AMD AMDUtils code
-// 
+//
 // Copyright(c) 2018 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -18,17 +18,21 @@
 // THE SOFTWARE.
 #pragma once
 
+#ifdef _WIN32
 #include <DXGIFormat.h>
+#endif
 
 struct IMG_INFO
 {
-    UINT32           width;
-    UINT32           height;
-    UINT32           depth;
-    UINT32           arraySize;
-    UINT32           mipMapCount;
-    DXGI_FORMAT      format;
-    UINT32           bitCount;
+    uint32_t width;
+    uint32_t height;
+    uint32_t depth;
+    uint32_t arraySize;
+    uint32_t mipMapCount;
+#ifdef _WIN32
+    DXGI_FORMAT format;
+#endif
+    uint32_t bitCount;
 };
 
 //Loads a Image file
@@ -36,13 +40,10 @@ struct IMG_INFO
 class ImgLoader
 {
 public:
-    virtual ~ImgLoader() {};
+    virtual ~ImgLoader(){};
     virtual bool Load(const char *pFilename, float cutOff, IMG_INFO *pInfo) = 0;
-    // after calling Load, calls to CopyPixels return each time a lower mip level 
+    // after calling Load, calls to CopyPixels return each time a lower mip level
     virtual void CopyPixels(void *pDest, uint32_t stride, uint32_t width, uint32_t height) = 0;
 };
 
-
 ImgLoader *GetImageLoader(const char *pFilename);
-
-

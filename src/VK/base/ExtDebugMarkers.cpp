@@ -54,7 +54,7 @@ namespace CAULDRON_VK
     }
 
 
-    void SetPerfMarkerBegin(VkCommandBuffer cmd_buf, char *pMsg)
+    void SetPerfMarkerBegin(VkCommandBuffer cmd_buf, const char *pMsg)
     {
         if (vkCmdDebugMarkerBegin)
         {

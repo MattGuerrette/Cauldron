@@ -20,7 +20,12 @@
 #include "stdafx.h"
 
 #include "Device.h"
+#ifdef _WIN32
 #include <vulkan/vulkan_win32.h>
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
+
 #include "Instance.h"
 #include "InstanceProperties.h"
 #include "DeviceProperties.h"
@@ -45,7 +50,7 @@ namespace CAULDRON_VK
     {
     }
 
-    void Device::OnCreate(const char *pAppName, const char *pEngineName, bool bValidationEnabled, HWND hWnd)
+    void Device::OnCreate(const char *pAppName, const char *pEngineName, bool bValidationEnabled, void* window)
     {
         VkApplicationInfo app_info = {};
         app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -99,12 +104,16 @@ namespace CAULDRON_VK
 
         // Crate a Win32 Surface
         //
+        #ifdef VK_SURF
         VkWin32SurfaceCreateInfoKHR createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
         createInfo.pNext = NULL;
         createInfo.hinstance = NULL;
         createInfo.hwnd = hWnd;
         res = vkCreateWin32SurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
+        #else
+
+        #endif
 
         // Find a graphics device and a queue that can present to the above surface
         //
@@ -305,7 +314,7 @@ namespace CAULDRON_VK
         vkDeviceWaitIdle(m_device);
     }
 
-    bool memory_type_from_properties(VkPhysicalDeviceMemoryProperties &memory_properties, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
+    bool memory_type_from_properties(const VkPhysicalDeviceMemoryProperties &memory_properties, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
         // Search memtypes to find first index with those properties
         for (uint32_t i = 0; i < memory_properties.memoryTypeCount; i++) {
             if ((typeBits & 1) == 1) {

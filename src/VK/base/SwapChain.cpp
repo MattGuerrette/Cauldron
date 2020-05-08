@@ -20,7 +20,12 @@
 #include "stdafx.h"
 #include "SwapChain.h"
 #include "ExtFreeSync2.h"
-#include <vulkan\vulkan_win32.h>
+
+#ifdef _WIN32
+#include <vulkan/vulkan_win32.h>
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
 
 namespace CAULDRON_VK
 {
@@ -44,8 +49,9 @@ namespace CAULDRON_VK
         m_presentQueue = pDevice->GetPresentQueue();
 
         // Init FS2
+        #ifdef _WIN32
         fs2Init(pDevice->GetDevice(), pDevice->GetSurface(), pDevice->GetPhysicalDevice(), hWnd);
-
+        #endif
         // set some safe format to start with
         m_displayMode = DISPLAYMODE_SDR;
         m_swapChainFormat = fs2GetFormat(m_displayMode);

@@ -20,28 +20,7 @@
 #include "stdafx.h"
 #include "Misc.h"
 
-//
-// Get current time in milliseconds
-//
-double MillisecondsNow()
-{
-    static LARGE_INTEGER s_frequency;
-    static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
-    double milliseconds = 0;
 
-    if (s_use_qpc)
-    {
-        LARGE_INTEGER now;
-        QueryPerformanceCounter(&now);
-        milliseconds = double(1000.0 * now.QuadPart) / s_frequency.QuadPart;
-    }
-    else
-    {
-        milliseconds = double(GetTickCount());
-    }
-
-    return milliseconds;
-}
 
 //
 // Compute a hash of an array
@@ -80,30 +59,7 @@ std::string format(const char* format, ...)
 #endif
 }
 
-void Trace(const std::string &str)
-{
-    std::mutex mutex;
-    std::unique_lock<std::mutex> lock(mutex);
-    OutputDebugStringA(str.c_str());
-}
 
-void Trace(const char* pFormat, ...)
-{
-    std::mutex mutex;
-    std::unique_lock<std::mutex> lock(mutex);
-
-    constexpr uint32_t MaxBufferSize = 20480;
-    char str[MaxBufferSize];
-    va_list args;
-
-    // generate formatted string
-    va_start(args, pFormat);
-    vsnprintf_s(str, MaxBufferSize, pFormat, args);
-    va_end(args);
-    strcat_s(str, "\n");
-
-    OutputDebugStringA(str);
-}
 
 //
 //  Reads a file into a buffer
@@ -167,7 +123,62 @@ bool SaveFile(const char *name, void const*data, size_t size, bool isbinary)
     return false;
 }
 
+void Trace(const std::string &str)
+{
+    std::mutex mutex;
+    std::unique_lock<std::mutex> lock(mutex);
 
+#ifdef _WIN32
+    OutputDebugStringA(str.c_str());
+#endif
+}
+
+void Trace(const char* pFormat, ...)
+{
+    std::mutex mutex;
+    std::unique_lock<std::mutex> lock(mutex);
+
+    constexpr uint32_t MaxBufferSize = 20480;
+    char str[MaxBufferSize];
+    va_list args;
+
+    // generate formatted string
+    #ifdef _WIN32
+    va_start(args, pFormat);
+    vsnprintf_s(str, MaxBufferSize, pFormat, args);
+    va_end(args);
+    strcat_s(str, "\n");
+
+    OutputDebugStringA(str);
+    #else
+
+    #endif
+
+}
+
+#ifdef _WIN32
+//
+// Get current time in milliseconds
+//
+double MillisecondsNow()
+{
+    static LARGE_INTEGER s_frequency;
+    static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
+    double milliseconds = 0;
+
+    if (s_use_qpc)
+    {
+        LARGE_INTEGER now;
+        QueryPerformanceCounter(&now);
+        milliseconds = double(1000.0 * now.QuadPart) / s_frequency.QuadPart;
+    }
+    else
+    {
+        milliseconds = double(GetTickCount());
+    }
+
+    return milliseconds;
+}
 
 //
 // Launch a process, captures stderr into a file
@@ -299,3 +310,4 @@ bool FrustumCulled(const XMMATRIX mCameraViewProj, const XMVECTOR center, const 
     return false;
 }
 
+#endif

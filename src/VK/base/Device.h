@@ -1,5 +1,5 @@
 // AMD AMDUtils code
-// 
+//
 // Copyright(c) 2018 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -20,7 +20,6 @@
 
 #include "vulkan/vulkan.h"
 
-
 #define USE_VMA
 
 #ifdef USE_VMA
@@ -29,16 +28,16 @@
 
 namespace CAULDRON_VK
 {
-    //
-    // Just a device class with many helper functions
-    //
+//
+// Just a device class with many helper functions
+//
 
-    class Device
-    {
-    public:
+class Device
+{
+public:
         Device();
         ~Device();
-        void OnCreate(const char *pAppName, const char *pEngine, bool bValidationEnabled, HWND hWnd);
+        void OnCreate(const char *pAppName, const char *pEngine, bool bValidationEnabled, void *window);
         void OnDestroy();
         VkDevice GetDevice() { return m_device; }
         VkQueue GetGraphicsQueue() { return graphics_queue; }
@@ -50,9 +49,15 @@ namespace CAULDRON_VK
         VkPhysicalDevice GetPhysicalDevice() { return m_physicaldevice; }
         VkSurfaceKHR GetSurface() { return m_surface; }
 #ifdef USE_VMA
-        VmaAllocator GetAllocator() { return m_hAllocator; }
+        VmaAllocator GetAllocator()
+        {
+                return m_hAllocator;
+        }
 #endif
-        VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties() { return m_memoryProperties; }
+        VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties()
+        {
+                return m_memoryProperties;
+        }
         VkPhysicalDeviceProperties GetPhysicalDeviceProperries() { return m_deviceProperties; }
         VkPhysicalDeviceSubgroupProperties GetPhysicalDeviceSubgroupProperties() { return m_subgroupProperties; }
 
@@ -64,12 +69,12 @@ namespace CAULDRON_VK
         void DestroyPipelineCache();
         VkPipelineCache GetPipelineCache();
 
-        void CreateShaderCache() {};
-        void DestroyShaderCache() {};
+        void CreateShaderCache(){};
+        void DestroyShaderCache(){};
 
         void GPUFlush();
 
-    private:
+private:
         VkInstance m_instance;
         VkDevice m_device;
         VkPhysicalDevice m_physicaldevice;
@@ -91,7 +96,7 @@ namespace CAULDRON_VK
 #ifdef USE_VMA
         VmaAllocator m_hAllocator = NULL;
 #endif
-    };
+};
 
-    bool memory_type_from_properties(VkPhysicalDeviceMemoryProperties &memory_properties, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
-}
+bool memory_type_from_properties(const VkPhysicalDeviceMemoryProperties &memory_properties, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
+} // namespace CAULDRON_VK

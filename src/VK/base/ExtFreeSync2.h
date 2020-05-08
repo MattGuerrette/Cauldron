@@ -21,15 +21,24 @@
 #include "DeviceProperties.h"
 #include "InstanceProperties.h"
 #include <vulkan/vulkan.h>
+
+#ifdef _WIN32
 #include <vulkan/vulkan_win32.h>
+#else
+#include <vulkan/vulkan_xcb.h>
+#endif
 
 namespace CAULDRON_VK
 {
     extern PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR g_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
     extern PFN_vkGetDeviceProcAddr                        g_vkGetDeviceProcAddr;
     extern PFN_vkSetHdrMetadataEXT                        g_vkSetHdrMetadataEXT;
+
+#ifdef _WIN32 // For now, Fedora 32 repo doesn't have latest SDK headers
     extern PFN_vkAcquireFullScreenExclusiveModeEXT        g_vkAcquireFullScreenExclusiveModeEXT;
     extern PFN_vkReleaseFullScreenExclusiveModeEXT        g_vkReleaseFullScreenExclusiveModeEXT;
+#endif
+
     extern PFN_vkGetPhysicalDeviceSurfaceFormats2KHR      g_vkGetPhysicalDeviceSurfaceFormats2KHR;
     extern PFN_vkSetLocalDimmingAMD                       g_vkSetLocalDimmingAMD;
 

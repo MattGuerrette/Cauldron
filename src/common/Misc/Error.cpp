@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "Error.h"
 
+#ifdef _WIN32
+
 void ShowErrorMessageBox(HRESULT hr)
 {
     wchar_t err[256];
@@ -32,3 +34,5 @@ void ShowCustomErrorMessageBox(_In_opt_ LPCWSTR lpErrorString)
 {
 	int msgboxID = MessageBoxW(NULL, lpErrorString, (LPCWSTR)L"Error", MB_OK | MB_TOPMOST);
 }
+
+#endif
